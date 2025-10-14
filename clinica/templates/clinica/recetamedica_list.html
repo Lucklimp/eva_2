@@ -1,0 +1,93 @@
+{% extends "clinica/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Lista de Recetas Médicas{% endblock %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">Recetas Médicas</h1>
+        <a href="{% url 'recetamedica-crear' %}" class="btn btn-success">Crear Nueva Receta</a>
+    </div>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-light">Filtros de Búsqueda</div>
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-center">
+                {% for field in filter.form %}
+                    <div class="col-md-4">{{ field|as_crispy_field }}</div>
+                {% endfor %}
+                <div class="col-md-auto">
+                    <button type="submit" class="btn btn-primary mt-3">Aplicar Filtros</button>
+                    <a href="{% url 'recetamedica-list' %}" class="btn btn-secondary mt-3">Limpiar Filtros</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if object_list %}
+        <p>Mostrando **{{ object_list|length }}** resultados filtrados.</p>
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    {% with current_order=request.GET.ordering %}
+                    {% url 'recetamedica-list' as list_url %}
+                    
+                    <th>
+                        <a href="{{ list_url }}?ordering={% if current_order == 'id' %}-id{% else %}id{% endif %}">
+                            ID 
+                            {% if current_order == 'id' %}↑{% elif current_order == '-id' %}↓{% endif %}
+                        </a>
+                    </th>
+                    
+                    <th>
+                        <a href="{{ list_url }}?ordering={% if current_order == 'consulta' %}-consulta{% else %}consulta{% endif %}">
+                            Consulta ID
+                            {% if current_order == 'consulta' %}↑{% elif current_order == '-consulta' %}↓{% endif %}
+                        </a>
+                    </th>
+                    
+                    <th>
+                        <a href="{{ list_url }}?ordering={% if current_order == 'medicamento' %}-medicamento{% else %}medicamento{% endif %}">
+                            Medicamento
+                            {% if current_order == 'medicamento' %}↑{% elif current_order == '-medicamento' %}↓{% endif %}
+                        </a>
+                    </th>
+                    
+                    <th>
+                        <a href="{{ list_url }}?ordering={% if current_order == 'dosis' %}-dosis{% else %}dosis{% endif %}">
+                            Dosis
+                            {% if current_order == 'dosis' %}↑{% elif current_order == '-dosis' %}↓{% endif %}
+                        </a>
+                    </th>
+                    
+                    <th>
+                        <a href="{{ list_url }}?ordering={% if current_order == 'frecuencia' %}-frecuencia{% else %}frecuencia{% endif %}">
+                            Frecuencia
+                            {% if current_order == 'frecuencia' %}↑{% elif current_order == '-frecuencia' %}↓{% endif %}
+                        </a>
+                    </th>
+                    
+                    {% endwith %}
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for obj in object_list %}
+                    <tr>
+                        <td>{{ obj.id }}</td>
+                        <td>{{ obj.consulta.id }}</td>
+                        <td>{{ obj.medicamento }}</td>
+                        <td>{{ obj.dosis }}</td>
+                        <td>{{ obj.frecuencia }}</td>
+                        <td>
+                            <a href="{% url 'recetamedica-editar' pk=obj.pk %}" class="btn btn-sm btn-info text-white">Editar</a>
+                            <a href="{% url 'recetamedica-eliminar' pk=obj.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-warning" role="alert">No hay recetas médicas registradas que coincidan con los filtros.</div>
+    {% endif %}
+{% endblock %}

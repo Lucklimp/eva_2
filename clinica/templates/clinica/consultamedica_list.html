@@ -1,0 +1,100 @@
+{% extends "clinica/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Lista de Consultas Médicas{% endblock %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">Consultas Médicas</h1>
+        <a href="{% url 'consultamedica-crear' %}" class="btn btn-success">Crear Nueva Consulta</a>
+    </div>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-light">Filtros de Búsqueda</div>
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-center">
+                {% for field in filter.form %}
+                    <div class="col-md-4">{{ field|as_crispy_field }}</div>
+                {% endfor %}
+                <div class="col-md-auto">
+                    <button type="submit" class="btn btn-primary mt-3">Aplicar Filtros</button>
+                    <a href="{% url 'consultamedica-list' %}" class="btn btn-secondary mt-3">Limpiar Filtros</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if object_list %}
+        <p>Mostrando **{{ object_list|length }}** resultados filtrados.</p>
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    {% with current_order=request.GET.ordering %}
+                    {% url 'consultamedica-list' as list_url %}
+                    
+                    <th>
+                        <a href="{{ list_url }}?ordering={% if current_order == 'id' %}-id{% else %}id{% endif %}">
+                            ID 
+                            {% if current_order == 'id' %}↑{% elif current_order == '-id' %}↓{% endif %}
+                        </a>
+                    </th>
+                    
+                    <th>
+                        <a href="{{ list_url }}?ordering={% if current_order == 'paciente' %}-paciente{% else %}paciente{% endif %}">
+                            Paciente
+                            {% if current_order == 'paciente' %}↑{% elif current_order == '-paciente' %}↓{% endif %}
+                        </a>
+                    </th>
+                    
+                    <th>
+                        <a href="{{ list_url }}?ordering={% if current_order == 'medico' %}-medico{% else %}medico{% endif %}">
+                            Médico
+                            {% if current_order == 'medico' %}↑{% elif current_order == '-medico' %}↓{% endif %}
+                        </a>
+                    </th>
+                    
+                    <th>
+                        <a href="{{ list_url }}?ordering={% if current_order == 'fecha_consulta' %}-fecha_consulta{% else %}fecha_consulta{% endif %}">
+                            Fecha
+                            {% if current_order == 'fecha_consulta' %}↑{% elif current_order == '-fecha_consulta' %}↓{% endif %}
+                        </a>
+                    </th>
+                    
+                    <th>Motivo</th>
+                    
+                    <th>
+                        <a href="{{ list_url }}?ordering={% if current_order == 'estado' %}-estado{% else %}estado{% endif %}">
+                            Estado
+                            {% if current_order == 'estado' %}↑{% elif current_order == '-estado' %}↓{% endif %}
+                        </a>
+                    </th>
+                    
+                    {% endwith %}
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for obj in object_list %}
+                    <tr>
+                        <td>{{ obj.id }}</td>
+                        <td>{{ obj.paciente }}</td>
+                        <td>{{ obj.medico }}</td>
+                        <td>{{ obj.fecha_consulta|date:"d M Y H:i" }}</td>
+                        <td>{{ obj.motivo }}</td>
+                        <td>
+                            <span class="badge bg-{% if obj.estado == 'REALIZADA' %}success{% elif obj.estado == 'CANCELADA' %}danger{% else %}warning{% endif %}">
+                                {{ obj.get_estado_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{% url 'consultamedica-editar' pk=obj.pk %}" class="btn btn-sm btn-info text-white">Editar</a>
+                            <a href="{% url 'consultamedica-eliminar' pk=obj.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-warning" role="alert">No hay consultas médicas registradas que coincidan con los filtros.</div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "clinica/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Lista de Pacientes{% endblock %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">Pacientes</h1>
+        <a href="{% url 'paciente-crear' %}" class="btn btn-success">Crear Nuevo Paciente</a>
+    </div>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-light">Filtros de Búsqueda</div>
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-center">
+                {% for field in filter.form %}
+                    <div class="col-md-4">{{ field|as_crispy_field }}</div>
+                {% endfor %}
+                <div class="col-md-auto">
+                    <button type="submit" class="btn btn-primary mt-3">Aplicar Filtros</button>
+                    <a href="{% url 'paciente-list' %}" class="btn btn-secondary mt-3">Limpiar Filtros</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if object_list %}
+        <p>Mostrando **{{ object_list|length }}** resultados filtrados.</p>
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    {% with current_order=request.GET.ordering %}
+                    {% url 'paciente-list' as list_url %}
+                    
+                    <th>
+                        <a href="{{ list_url }}?ordering={% if current_order == 'rut' %}-rut{% else %}rut{% endif %}">
+                            RUT
+                            {% if current_order == 'rut' %}↑{% elif current_order == '-rut' %}↓{% endif %}
+                        </a>
+                    </th>
+                    
+                    <th>
+                        <a href="{{ list_url }}?ordering={% if current_order == 'nombre' %}-nombre{% else %}nombre{% endif %}">
+                            Nombre Completo
+                            {% if current_order == 'nombre' %}↑{% elif current_order == '-nombre' %}↓{% endif %}
+                        </a>
+                    </th>
+                    
+                    <th>
+                        <a href="{{ list_url }}?ordering={% if current_order == 'fecha_nacimiento' %}-fecha_nacimiento{% else %}fecha_nacimiento{% endif %}">
+                            Fecha Nac.
+                            {% if current_order == 'fecha_nacimiento' %}↑{% elif current_order == '-fecha_nacimiento' %}↓{% endif %}
+                        </a>
+                    </th>
+                    
+                    <th>Tipo Sangre</th>
+                    
+                    <th>
+                        <a href="{{ list_url }}?ordering={% if current_order == 'activo' %}-activo{% else %}activo{% endif %}">
+                            Activo
+                            {% if current_order == 'activo' %}↑{% elif current_order == '-activo' %}↓{% endif %}
+                        </a>
+                    </th>
+                    
+                    {% endwith %}
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for obj in object_list %}
+                    <tr>
+                        <td>{{ obj.rut }}</td>
+                        <td>{{ obj.nombre }} {{ obj.apellido }}</td>
+                        <td>{{ obj.fecha_nacimiento|date:"d M Y" }}</td>
+                        <td>{{ obj.tipo_sangre }}</td>
+                        <td>{% if obj.activo %}<span class="badge bg-success">Sí</span>{% else %}<span class="badge bg-danger">No</span>{% endif %}</td>
+                        <td>
+                            <a href="{% url 'paciente-editar' pk=obj.pk %}" class="btn btn-sm btn-info text-white">Editar</a>
+                            <a href="{% url 'paciente-eliminar' pk=obj.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-warning" role="alert">No hay pacientes registrados que coincidan con los filtros.</div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "clinica/base.html" %}
+
+{% block title %}Confirmar Eliminación{% endblock %}
+
+{% block content %}
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Advertencia de Eliminación</h4>
+        <p>¿Está seguro que desea eliminar el registro de **{{ model_name }}**:</p>
+        <p class="mb-0"><strong>{{ object }}</strong>?</p>
+        <hr>
+        <p class="mb-0">Esta acción no se puede deshacer.</p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger btn-lg">Sí, Eliminar Permanentemente</button>
+        <a href="{{ cancel_url }}" class="btn btn-secondary btn-lg">Cancelar</a>
+    </form>
+{% endblock %}

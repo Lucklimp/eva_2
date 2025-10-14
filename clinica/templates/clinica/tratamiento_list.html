@@ -1,0 +1,88 @@
+{% extends "clinica/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Lista de Tratamientos{% endblock %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">Tratamientos</h1>
+        <a href="{% url 'tratamiento-crear' %}" class="btn btn-success">Crear Nuevo Tratamiento</a>
+    </div>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-light">Filtros de Búsqueda</div>
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-center">
+                {% for field in filter.form %}
+                    <div class="col-md-4">{{ field|as_crispy_field }}</div>
+                {% endfor %}
+                <div class="col-md-auto">
+                    <button type="submit" class="btn btn-primary mt-3">Aplicar Filtros</button>
+                    <a href="{% url 'tratamiento-list' %}" class="btn btn-secondary mt-3">Limpiar Filtros</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if object_list %}
+        <p>Mostrando **{{ object_list|length }}** resultados filtrados.</p>
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    {% with current_order=request.GET.ordering %}
+                    {% url 'tratamiento-list' as list_url %}
+                    
+                    <th>
+                        <a href="{{ list_url }}?ordering={% if current_order == 'id' %}-id{% else %}id{% endif %}">
+                            ID 
+                            {% if current_order == 'id' %}↑{% elif current_order == '-id' %}↓{% endif %}
+                        </a>
+                    </th>
+                    
+                    <th>
+                        <a href="{{ list_url }}?ordering={% if current_order == 'consulta' %}-consulta{% else %}consulta{% endif %}">
+                            Consulta ID
+                            {% if current_order == 'consulta' %}↑{% elif current_order == '-consulta' %}↓{% endif %}
+                        </a>
+                    </th>
+                    
+                    <th>
+                        <a href="{{ list_url }}?ordering={% if current_order == 'descripcion' %}-descripcion{% else %}descripcion{% endif %}">
+                            Descripción
+                            {% if current_order == 'descripcion' %}↑{% elif current_order == '-descripcion' %}↓{% endif %}
+                        </a>
+                    </th>
+                    
+                    <th>
+                        <a href="{{ list_url }}?ordering={% if current_order == 'duracion_dias' %}-duracion_dias{% else %}duracion_dias{% endif %}">
+                            Duración (días)
+                            {% if current_order == 'duracion_dias' %}↑{% elif current_order == '-duracion_dias' %}↓{% endif %}
+                        </a>
+                    </th>
+                    
+                    <th>Observaciones</th>
+                    
+                    {% endwith %}
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for obj in object_list %}
+                    <tr>
+                        <td>{{ obj.id }}</td>
+                        <td>{{ obj.consulta.id }}</td>
+                        <td>{{ obj.descripcion|truncatechars:50 }}</td>
+                        <td>{{ obj.duracion_dias }}</td>
+                        <td>{{ obj.observaciones|truncatechars:30 }}</td>
+                        <td>
+                            <a href="{% url 'tratamiento-editar' pk=obj.pk %}" class="btn btn-sm btn-info text-white">Editar</a>
+                            <a href="{% url 'tratamiento-eliminar' pk=obj.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-warning" role="alert">No hay tratamientos registrados que coincidan con los filtros.</div>
+    {% endif %}
+{% endblock %}
