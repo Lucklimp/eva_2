@@ -1,4 +1,5 @@
 # clinica/urls.py
+from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
@@ -30,7 +31,8 @@ router.register(r'recetas', RecetaMedicaViewSet)
 
 
 urlpatterns = [
-     path('', DepartamentoListView.as_view(), name='home'), 
+    path('admin/', admin.site.urls),
+    path('', DepartamentoListView.as_view(), name='home'), 
     # -----------------------------------------------------------
     # RUTAS DE LA API
     # -----------------------------------------------------------

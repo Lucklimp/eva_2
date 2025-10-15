@@ -9,7 +9,7 @@ from decimal import Decimal
 
 #
 """
-Módulo de Modelos de Datos para Salud Vital Ltda.
+Módulo de Modelos de Datos para Salud Vital 
 Incluye las 7 entidades principales (Especialidad, Paciente, Médico,
 Consulta_Medica, Tratamiento, Medicamento, Receta_Medica),
 la mejora de la tabla 'Departamento' y CHOICES para 'estado'.

@@ -74,7 +74,7 @@ class ConsultaMedicaForm(forms.ModelForm):
     class Meta:
         model = Consulta_Medica
         # Lista de campos específicos incluidos en este formulario
-        fields = ['paciente', 'medico', 'motivo', 'diagnostico', 'estado'] 
+        fields = ['paciente', 'medico', 'motivo', 'diagnostico', 'estado'] #vhoices
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
